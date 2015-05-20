@@ -7,14 +7,14 @@ var templateToLoad;
 templateToLoad = templateToLoad || "https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/settings-update/settingsTemplate.html";
 console.log(templateToLoad);
 var notificationSettings = {
-  phrases: ["ocbaker","oliver","admin","mods","moderator","baker","swear","language"],
-  general: true,
-  mentions: true,
-  generalTimeout: 5 * 1000,
-  mentionTimeout: 10 * 1000,
-  notifyWhenChatActive: false,
-  generalFormat: defaultNotificationFormat,
-  mentionFormat: defaultNotificationFormat
+    phrases: ["ocbaker", "oliver", "admin", "mods", "moderator", "baker", "swear", "language"],
+    general: true,
+    mentions: true,
+    generalTimeout: 5 * 1000,
+    mentionTimeout: 10 * 1000,
+    notifyWhenChatActive: false,
+    generalFormat: defaultNotificationFormat,
+    mentionFormat: defaultNotificationFormat
 };
 
 Shoutbox_PutMsgs = function Shoutbox_PutMsgs(XMLDoc) 
@@ -102,69 +102,74 @@ Shoutbox_PutMsgs = function Shoutbox_PutMsgs(XMLDoc)
     }
     if (error)
         window.alert(error);
-    if (!Shoutbox.first && XMLDoc.getElementsByTagName("newmsgs")[0]){
+    if (!Shoutbox.first && XMLDoc.getElementsByTagName("newmsgs")[0]) {
         var msgs = $(XMLDoc.getElementsByTagName("msgs")[0].childNodes[0].nodeValue);
-        if((notificationSettings.notifyWhenChatActive || isHidden()) && (notificationSettings.general || notificationSettings.mentions)) 
-          msgs.each(function (a,b,c){
-              var txt = $(b).text();
-              if(txt != ""){
-                var stxt = txt.toLowerCase();
-                var found = false;
-                notificationSettings.phrases.forEach(function(phrase, i){
-                  if(!found && stxt.indexOf(phrase.toLowerCase()) != -1)
-                    found = true;
-                });
-
-                if(found && notificationSettings.mentions)
-                  notifyMe("LoE Chat Mention", notificationSettings.mentionFormat(txt), notificationSettings.mentionTimeout);
-                if(!(found && notificationSettings.mentions) && notificationSettings.general)
-                  notifyMe("LoE Chat", notificationSettings.generalFormat(txt), notificationSettings.generalTimeout);
-              }
-
-          });
+        if ((notificationSettings.notifyWhenChatActive || isHidden()) && (notificationSettings.general || notificationSettings.mentions))
+            msgs.each(function(a, b, c) {
+                var txt = $(b).text();
+                if (txt != "") {
+                    var stxt = txt.toLowerCase();
+                    var found = false;
+                    notificationSettings.phrases.forEach(function(phrase, i) {
+                        if (!found && stxt.indexOf(phrase.toLowerCase()) != -1)
+                            found = true;
+                    });
+                    
+                    if (found && notificationSettings.mentions)
+                        notifyMe("LoE Chat Mention", notificationSettings.mentionFormat(txt), notificationSettings.mentionTimeout);
+                    if (!(found && notificationSettings.mentions) && notificationSettings.general)
+                        notifyMe("LoE Chat", notificationSettings.generalFormat(txt), notificationSettings.generalTimeout);
+                }
+            
+            });
         Shoutbox_NewMsgs();
     }
     Shoutbox.first = false;
 };
 
 notifyMe = function notifyMe(title, msg, timeout) {
-  // Let's check if the browser supports notifications
-  if (!("Notification" in window)) {
-    alert("This browser does not support desktop notification");
-  }
+    // Let's check if the browser supports notifications
+    if (!("Notification" in window)) {
+        alert("This browser does not support desktop notification");
+    } 
 
-  // Let's check whether notification permissions have alredy been granted
-  else if (Notification.permission === "granted") {
-    // If it's okay let's create a notification
-    var notification = new Notification(title, {body: msg, icon: "https://pbs.twimg.com/profile_images/1910794026/LoE_Web_Logo2_400x400.png"});
-    if(timeout != 0)
-      setTimeout(function(){notification.close();}, timeout);
-  }
+    // Let's check whether notification permissions have alredy been granted
+    else if (Notification.permission === "granted") {
+        // If it's okay let's create a notification
+        var notification = new Notification(title, {body: msg,icon: "https://pbs.twimg.com/profile_images/1910794026/LoE_Web_Logo2_400x400.png"});
+        if (timeout != 0)
+            setTimeout(function() {
+                notification.close();
+            }, timeout);
+    } 
 
-  // Otherwise, we need to ask the user for permission
-  else if (Notification.permission !== 'denied') {
-    Notification.requestPermission(function (permission) {
-      // If the user accepts, let's create a notification
-      if (permission === "granted") {
-        var notification = new Notification(title, {body: msg, icon: "https://pbs.twimg.com/profile_images/1910794026/LoE_Web_Logo2_400x400.png"});
-    if(timeout != 0)
-      setTimeout(function(){notification.close();}, timeout);
-      }
-    });
-  }
+    // Otherwise, we need to ask the user for permission
+    else if (Notification.permission !== 'denied') {
+        Notification.requestPermission(function(permission) {
+            // If the user accepts, let's create a notification
+            if (permission === "granted") {
+                var notification = new Notification(title, {body: msg,icon: "https://pbs.twimg.com/profile_images/1910794026/LoE_Web_Logo2_400x400.png"});
+                if (timeout != 0)
+                    setTimeout(function() {
+                        notification.close();
+                    }, timeout);
+            }
+        });
+    }
 
-  // At last, if the user has denied notifications, and you 
-  // want to be respectful there is no need to bother them any more.
+// At last, if the user has denied notifications, and you 
+// want to be respectful there is no need to bother them any more.
 }
-function getHiddenProp(){
-    var prefixes = ['webkit','moz','ms','o'];
-    
+function getHiddenProp() {
+    var prefixes = ['webkit', 'moz', 'ms', 'o'];
+
     // if 'hidden' is natively supported just return it
-    if ('hidden' in document) return 'hidden';
-    
+    if ('hidden' in document)
+        return 'hidden';
+
     // otherwise loop over all the known prefixes until we find one
-    for (var i = 0; i < prefixes.length; i++){
-        if ((prefixes[i] + 'Hidden') in document) 
+    for (var i = 0; i < prefixes.length; i++) {
+        if ((prefixes[i] + 'Hidden') in document)
             return prefixes[i] + 'Hidden';
     }
 
@@ -173,40 +178,57 @@ function getHiddenProp(){
 }
 function isHidden() {
     var prop = getHiddenProp();
-    if (!prop) return false;
+    if (!prop)
+        return false;
     
     return document[prop];
+}
+
+function loadAngular() {
+    
+    angular.module('Foo', ['LocalStorageModule'], function($controllerProvider) {
+        controllerProvider = $controllerProvider;
+    });
+    // Bootstrap Foo
+    angular.bootstrap($('#shoutbox'), ['Foo']);
+
+    // .. time passes ..
+
+    // Load javascript file with Ctrl controller
+    var myApp = angular.module('Foo');
+    myApp.config(function(localStorageServiceProvider) {
+        localStorageServiceProvider
+        .setPrefix('myApp')
+        .setStorageType('localStorage')
+        .setNotify(true, true)
+    });
+    myApp.controller('Ctrl', function($scope, $rootScope, localStorageService) {
+        console.log(localStorageService);
+        $scope.settings = notificationSettings;
+        $scope.msg = "It works! rootScope is " + $rootScope.$id + 
+        ", should be " + $('#shoutbox .content').scope().$id;
+        console.log($scope);
+    });
+    // Load html file with content that uses Ctrl controller
+    $('<div id="nSettings">').appendTo('#shoutbox .content');
+    $('#nSettings').load(templateToLoad, function() {
+        registerController("Foo", "Ctrl");
+        // compile the new element
+        $('#shoutbox .content').injector().invoke(function($compile, $rootScope, localStorageService) {
+            $compile($('#ctrl'))($rootScope);
+            $rootScope.$apply();
+        });
+    });
 }
 
 var controllerProvider = null;
 
 jQuery.getScript("//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.2/angular.min.js", function() {
-    angular.module('Foo', [], function($controllerProvider) {
-    controllerProvider = $controllerProvider;
-});
-// Bootstrap Foo
-angular.bootstrap($('#shoutbox'), ['Foo']);
-
-// .. time passes ..
-
-// Load javascript file with Ctrl controller
-angular.module('Foo').controller('Ctrl', function($scope, $rootScope) {
-    $scope.settings = notificationSettings;
-    $scope.msg = "It works! rootScope is " + $rootScope.$id +
-        ", should be " + $('#shoutbox .content').scope().$id;
-    console.log($scope);
-});
-// Load html file with content that uses Ctrl controller
-$('<div id="nSettings">').appendTo('#shoutbox .content');
-    $('#nSettings').load(templateToLoad, function(){
-        registerController("Foo", "Ctrl");
-    // compile the new element
-    $('#shoutbox .content').injector().invoke(function($compile, $rootScope) {
-        $compile($('#ctrl'))($rootScope);
-        $rootScope.$apply();
-    });
+    jQuery.getScript("//gregpike.net/demos/angular-local-storage/src/angular-local-storage.js", function() {
+        loadAngular();
     });
 });
+
 // Register Ctrl controller manually
 // If you can reference the controller function directly, just run:
 // $controllerProvider.register(controllerName, controllerFunction);
@@ -216,14 +238,14 @@ function registerController(moduleName, controllerName) {
     // Here I cannot get the controller function directly so I
     // need to loop through the module's _invokeQueue to get it
     var queue = angular.module(moduleName)._invokeQueue;
-    for(var i=0;i<queue.length;i++) {
+    for (var i = 0; i < queue.length; i++) {
         var call = queue[i];
-        if(call[0] == "$controllerProvider" &&
-           call[1] == "register" &&
-           call[2][0] == controllerName) {
+        if (call[0] == "$controllerProvider" && 
+        call[1] == "register" && 
+        call[2][0] == controllerName) {
             controllerProvider.register(controllerName, call[2][1]);
         }
     }
 }
 
-notifyMe("LoE Chat","Loaded Notifications",10000);
+notifyMe("LoE Chat", "Loaded Notifications", 10000);
