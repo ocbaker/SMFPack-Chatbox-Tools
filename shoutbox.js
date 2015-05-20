@@ -224,7 +224,7 @@ function loadAngular() {
 var controllerProvider = null;
 
 jQuery.getScript("//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.2/angular.min.js", function() {
-    jQuery.getScript("//gregpike.net/demos/angular-local-storage/src/angular-local-storage.js", function() {
+    jQuery.getScript("https://rawgit.com/grevory/angular-local-storage/master/dist/angular-local-storage.js", function() {
         loadAngular();
     });
 });
