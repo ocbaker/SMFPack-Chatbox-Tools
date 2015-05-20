@@ -175,3 +175,53 @@ function isHidden() {
     
     return document[prop];
 }
+
+var controllerProvider = null;
+
+jQuery.getScript("//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.2/angular.min.js", function() {
+    angular.module('Foo', [], function($controllerProvider) {
+    controllerProvider = $controllerProvider;
+});
+// Bootstrap Foo
+angular.bootstrap($('#shoutbox'), ['Foo']);
+
+// .. time passes ..
+
+// Load javascript file with Ctrl controller
+angular.module('Foo').controller('Ctrl', function($scope, $rootScope) {
+    $scope.settings = notificationSettings;
+    $scope.msg = "It works! rootScope is " + $rootScope.$id +
+        ", should be " + $('#shoutbox .content').scope().$id;
+    console.log($scope);
+});
+// Load html file with content that uses Ctrl controller
+$('<div id="nSettings">').appendTo('#shoutbox .content');
+    $('#nSettings').load("https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/settings-update/settingsTemplate.html", function(){
+        registerController("Foo", "Ctrl");
+    // compile the new element
+    $('#shoutbox .content').injector().invoke(function($compile, $rootScope) {
+        $compile($('#ctrl'))($rootScope);
+        $rootScope.$apply();
+    });
+    });
+});
+// Register Ctrl controller manually
+// If you can reference the controller function directly, just run:
+// $controllerProvider.register(controllerName, controllerFunction);
+// Note: I haven't found a way to get $controllerProvider at this stage
+//    so I keep a reference from when I ran my module config
+function registerController(moduleName, controllerName) {
+    // Here I cannot get the controller function directly so I
+    // need to loop through the module's _invokeQueue to get it
+    var queue = angular.module(moduleName)._invokeQueue;
+    for(var i=0;i<queue.length;i++) {
+        var call = queue[i];
+        if(call[0] == "$controllerProvider" &&
+           call[1] == "register" &&
+           call[2][0] == controllerName) {
+            controllerProvider.register(controllerName, call[2][1]);
+        }
+    }
+}
+
+notifyMe("LoE Chat","Loaded Notifications",10000);
