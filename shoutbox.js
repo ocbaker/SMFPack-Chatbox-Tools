@@ -13,7 +13,8 @@ var notificationSettings = {
     mentionTimeout: 10 * 1000,
     notifyWhenChatActive: false,
     generalFormat: defaultNotificationFormat,
-    mentionFormat: defaultNotificationFormat
+    mentionFormat: defaultNotificationFormat,
+    chatHeight: 180
 };
 function loadChatbox(){
     Shoutbox_PutMsgs = function Shoutbox_PutMsgs(XMLDoc) 
@@ -50,7 +51,7 @@ function loadChatbox(){
             if (toReset) 
             {
                 if (Shoutbox.msgdown)
-                    setInnerHTML(document.getElementById("shoutbox_banned"), '<table cellspacing="0" cellpadding="0" border="0" align="left"><tr><td valign="bottom" height="' + Shoutbox.height + '"><table id="shoutbox_table" cellspacing="0" cellpadding="2" border="0"><tr id="shoutbox_msgs"></tr></table></td></tr></table>');
+                    setInnerHTML(document.getElementById("shoutbox_banned"), '<table cellspacing="0" cellpadding="0" border="0" align="left"><tr><td valign="bottom" height="' + notificationSettings.chatHeight + '"><table id="shoutbox_table" cellspacing="0" cellpadding="2" border="0"><tr id="shoutbox_msgs"></tr></table></td></tr></table>');
                 else
                     setInnerHTML(document.getElementById("shoutbox_banned"), '<table id="shoutbox_table" cellspacing="0" cellpadding="2" border="0" align="left"><thead id="shoutbox_msgs"></thead></table>');
             }
@@ -61,7 +62,7 @@ function loadChatbox(){
             var msgs = '';
             if (Shoutbox.msgdown) 
             {
-                msgs += '<table cellspacing="0" cellpadding="0" border="0" align="left"><tr><td valign="bottom" height="' + Shoutbox.height + '"><table id="shoutbox_table" cellspacing="0" cellpadding="2" border="0">';
+                msgs += '<table cellspacing="0" cellpadding="0" border="0" align="left"><tr><td valign="bottom" height="' + notificationSettings.chatHeight + '"><table id="shoutbox_table" cellspacing="0" cellpadding="2" border="0">';
                 msgs += (toReset ? '' : getInnerHTML(document.getElementById("shoutbox_table"))) + XMLDoc.getElementsByTagName("msgs")[0].childNodes[0].nodeValue;
                 msgs += '</table></td></tr></table>';
             } 
@@ -209,12 +210,18 @@ function loadAngular() {
     myApp.controller('Ctrl', function($scope, $rootScope, localStorageService) {
         console.log(localStorageService);
         $scope.settings = notificationSettings;
+        $scope.getChatStyle = function(){
+            return {'height': $scope.settings.chatHeight + 'px', 'max-height': $scope.settings.chatHeight + 'px'};
+        };
         console.log($scope);
         loadChatbox();
         notifyMe("LoE Chat", "Loaded Notifications", 10000);
     });
     // Load html file with content that uses Ctrl controller
     $('<div id="nSettings">').appendTo('#shoutbox .content');
+    $('#shoutbox .content').attr("ng-controller","Ctrl");
+    $('#shoutbox .content').attr("id","ctrl");
+    $('#shoutbox_banned').attr("ng-style","getChatStyle()");
     $('#nSettings').load(templateToLoad, function() {
         registerController("Foo", "Ctrl");
         // compile the new element
