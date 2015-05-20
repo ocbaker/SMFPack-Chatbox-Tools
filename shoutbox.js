@@ -3,7 +3,7 @@ function defaultNotificationFormat(txt){
       return txt.substring(txt.indexOf("]:")+2);
     return txt.substr(0,txt.indexOf("[")-1) + ": " + txt.substring(txt.indexOf("]:")+2);
 }
-
+templateToLoad = templateToLoad || "https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/settings-update/settingsTemplate.html";
 var notificationSettings = {
   phrases: ["ocbaker","oliver","admin","mods","moderator","baker","swear","language"],
   general: true,
@@ -196,7 +196,7 @@ angular.module('Foo').controller('Ctrl', function($scope, $rootScope) {
 });
 // Load html file with content that uses Ctrl controller
 $('<div id="nSettings">').appendTo('#shoutbox .content');
-    $('#nSettings').load("https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/settings-update/settingsTemplate.html", function(){
+    $('#nSettings').load(templateToLoad, function(){
         registerController("Foo", "Ctrl");
     // compile the new element
     $('#shoutbox .content').injector().invoke(function($compile, $rootScope) {
