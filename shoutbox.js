@@ -3,7 +3,9 @@ function defaultNotificationFormat(txt){
       return txt.substring(txt.indexOf("]:")+2);
     return txt.substr(0,txt.indexOf("[")-1) + ": " + txt.substring(txt.indexOf("]:")+2);
 }
+var templateToLoad;
 templateToLoad = templateToLoad || "https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/settings-update/settingsTemplate.html";
+console.log(templateToLoad);
 var notificationSettings = {
   phrases: ["ocbaker","oliver","admin","mods","moderator","baker","swear","language"],
   general: true,
