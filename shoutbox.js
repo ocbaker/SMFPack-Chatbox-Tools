@@ -17,6 +17,7 @@ function defaultNotificationFormat(txt){
     return txt.substr(0, txt.indexOf("[") - 1) + ": " + txt.substring(txt.indexOf("]:") + 2);
 }
 
+var accountName = $(".greeting > span").text();
 var notificationSettings = {
     phrases: ["ocbaker", "oliver", "admin", "mods", "moderator", "baker", "swear", "language"],
     general: true,
@@ -144,7 +145,7 @@ function loadChatbox(){
                                     found = true;
                             });
 
-                            if (found && notificationSettings.mentions)
+                            if (found && notificationSettings.mentions && getName($(b)) != accountName)
                                 notifyMe("LoE Chat Mention", notificationSettings.mentionFormat(txt), notificationSettings.mentionTimeout);
                             if (!(found && notificationSettings.mentions) && notificationSettings.general)
                                 notifyMe("LoE Chat", notificationSettings.generalFormat(txt), notificationSettings.generalTimeout);
