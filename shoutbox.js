@@ -9,7 +9,7 @@ var notificationSettings = {
   general: true,
   mentions: true,
   generalTimeout: 5 * 1000,
-  mentionTimout: 10 * 1000,
+  mentionTimeout: 10 * 1000,
   notifyWhenChatActive: false,
   generalFormat: defaultNotificationFormat,
   mentionFormat: defaultNotificationFormat
@@ -114,7 +114,7 @@ Shoutbox_PutMsgs = function Shoutbox_PutMsgs(XMLDoc)
                 });
 
                 if(found && notificationSettings.mentions)
-                  notifyMe("LoE Chat Mention", notificationSettings.mentionFormat(txt), notificationSettings.mentionTimout);
+                  notifyMe("LoE Chat Mention", notificationSettings.mentionFormat(txt), notificationSettings.mentionTimeout);
                 if(!(found && notificationSettings.mentions) && notificationSettings.general)
                   notifyMe("LoE Chat", notificationSettings.generalFormat(txt), notificationSettings.generalTimeout);
               }
