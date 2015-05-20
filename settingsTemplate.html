@@ -1,7 +1,5 @@
 <div id="ctrl" ng-controller="Ctrl">
-    <span>General Notifications: </span><input type="checkbox" ng-model="settings.general"><br/>
-    <span>Mention Notifications: </span><input type="checkbox" ng-model="settings.mentions"><br/>
-    <p ng-bind="msg">
-        
-    </p>
+    <b>General Notifications: </b><input type="checkbox" ng-model="settings.general"> <b>Timeout: </b><input type="text" ng-disabled="!settings.general" ng-model="settings.generalTimeout"><br/>
+    <b>Mention Notifications: </b><input type="checkbox" ng-model="settings.mentions"> <b>Timeout: </b><input type="text" ng-disabled="!settings.mentions" ng-model="settings.mentionTimeout"><br/>
+    <b>Disable when chat active: </b><input type="checkbox" ng-model="!settings.notifyWhenChatActive"><br/>
 </div>
