@@ -19,7 +19,7 @@ function defaultNotificationFormat(txt){
 
 var accountName = $(".greeting > span").text();
 var notificationSettings = {
-    phrases: ["ocbaker", "oliver", "admin", "mods", "moderator", "baker", "swear", "language"],
+    phrases: [],
     general: true,
     mentions: true,
     generalTimeout: 5 * 1000,
@@ -140,10 +140,15 @@ function loadChatbox(){
                         if (txt != "") {
                             var stxt = txt.toLowerCase();
                             var found = false;
-                            notificationSettings.phrases.forEach(function(phrase, i) {
-                                if (!found && stxt.indexOf(phrase.toLowerCase()) != -1)
-                                    found = true;
-                            });
+                            if(stxt.indexOf(("@" + accountName).toLowerCase()) != -1){
+                                found = true;
+                                $("#" + $(b).attr("id")).highlight("@" + accountName);
+                            }
+                            if(!found)
+                                notificationSettings.phrases.forEach(function(phrase, i) {
+                                    if (!found && stxt.indexOf(phrase.toLowerCase()) != -1)
+                                        found = true;
+                                });
 
                             if (found && notificationSettings.mentions && getName($(b)) != accountName)
                                 notifyMe("LoE Chat Mention", notificationSettings.mentionFormat(txt), notificationSettings.mentionTimeout);
@@ -291,8 +296,10 @@ jQuery.getScript("//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.2/angular.m
     jQuery.getScript(getGitScript("jeff-collins/ment.io/master/dist/mentio.js"), function() {
         jQuery.getScript(getGitScript("grevory/angular-local-storage/master/dist/angular-local-storage.js"), function() {
             jQuery.getScript(getGitScript("jeff-collins/ment.io/master/dist/templates.js"), function() {
-            loadAngular();
-        });
+                jQuery.getScript(getGitScript("bartaz/sandbox.js/master/jquery.highlight.js"), function() {
+                    loadAngular();
+                });
+            });
         });
     });
 });
