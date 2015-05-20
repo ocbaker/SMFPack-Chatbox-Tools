@@ -29,6 +29,10 @@ var notificationSettings = {
     mentionFormat: defaultNotificationFormat,
     chatHeight: 180
 };
+
+if(setUserSettings != undefined)
+    setUserSettings();
+
 var ret = [];
 var people = [];
 var addPerson = function(elem){
