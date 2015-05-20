@@ -135,7 +135,7 @@ function loadChatbox(){
             var msgs = $(XMLDoc.getElementsByTagName("msgs")[0].childNodes[0].nodeValue);
                 msgs.each(function(a, b, c) {
                     addPerson($(b));
-                    if ((notificationSettings.notifyWhenChatActive || isHidden()) && (notificationSettings.general || notificationSettings.mentions)){
+                    if ((notificationSettings.general || notificationSettings.mentions)){
                         var txt = $(b).text();
                         if (txt != "") {
                             var stxt = txt.toLowerCase();
@@ -144,16 +144,18 @@ function loadChatbox(){
                                 found = true;
                                 $("#" + $(b).attr("id")).highlight("@" + accountName);
                             }
-                            if(!found)
-                                notificationSettings.phrases.forEach(function(phrase, i) {
-                                    if (!found && stxt.indexOf(phrase.toLowerCase()) != -1)
-                                        found = true;
-                                });
-
-                            if (found && notificationSettings.mentions && getName($(b)) != accountName)
+                            notificationSettings.phrases.forEach(function(phrase, i) {
+                                if (stxt.indexOf(phrase.toLowerCase()) != -1){
+                                    found = true;
+                                    $("#" + $(b).attr("id")).highlight(phrase);
+                                }   
+                            });
+                            if((notificationSettings.notifyWhenChatActive || isHidden())){
+                                if (found && notificationSettings.mentions && getName($(b)) != accountName)
                                 notifyMe("LoE Chat Mention", notificationSettings.mentionFormat(txt), notificationSettings.mentionTimeout);
-                            if (!(found && notificationSettings.mentions) && notificationSettings.general)
-                                notifyMe("LoE Chat", notificationSettings.generalFormat(txt), notificationSettings.generalTimeout);
+                                if (!(found && notificationSettings.mentions) && notificationSettings.general)
+                                    notifyMe("LoE Chat", notificationSettings.generalFormat(txt), notificationSettings.generalTimeout);
+                            }                            
                         }
                     }
 
