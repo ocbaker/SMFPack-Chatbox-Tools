@@ -1,10 +1,10 @@
-function defaultNotificationFormat(txt){
-    if(txt.substr(0,txt.indexOf("[")-1) == 0)
-      return txt.substring(txt.indexOf("]:")+2);
-    return txt.substr(0,txt.indexOf("[")-1) + ": " + txt.substring(txt.indexOf("]:")+2);
-}
 var templateToLoad;
 templateToLoad = templateToLoad || "https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/settings-update/settingsTemplate.html";
+function defaultNotificationFormat(txt) {
+    if (txt.substr(0, txt.indexOf("[") - 1) == 0)
+        return txt.substring(txt.indexOf("]:") + 2);
+    return txt.substr(0, txt.indexOf("[") - 1) + ": " + txt.substring(txt.indexOf("]:") + 2);
+}
 var notificationSettings = {
     phrases: ["ocbaker", "oliver", "admin", "mods", "moderator", "baker", "swear", "language"],
     general: true,
@@ -94,6 +94,10 @@ function loadChatbox(){
             Shoutbox.loading = false;
         }
         document.getElementById("shoutbox_status").style.visibility = 'hidden';
+        if(Shoutbox.height != notificationSettings.chatHeight){
+            Shoutbox.height = notificationSettings.chatHeight;
+            Shoutbox.scroll = 0;
+        }
         if (Shoutbox.msgdown && (document.getElementById("shoutbox_banned").scrollTop >= Shoutbox.scroll || Shoutbox.scroll == 0)) 
         {
             document.getElementById("shoutbox_banned").scrollTop = document.getElementById("shoutbox_banned").scrollHeight;
@@ -213,6 +217,9 @@ function loadAngular() {
         $scope.getChatStyle = function(){
             return {'height': $scope.settings.chatHeight + 'px', 'max-height': $scope.settings.chatHeight + 'px'};
         };
+        $scope.resetChat = function() {
+
+        };
         console.log($scope);
         loadChatbox();
         notifyMe("LoE Chat", "Loaded Notifications", 10000);
@@ -222,6 +229,7 @@ function loadAngular() {
     $('#shoutbox .content').attr("ng-controller","Ctrl");
     $('#shoutbox .content').attr("id","ctrl");
     $('#shoutbox_banned').attr("ng-style","getChatStyle()");
+    $("#shoutbox_banned > table > tbody > tr > td").attr("height", "{{settings.chatHeight}}")
     $('#nSettings').load(templateToLoad, function() {
         registerController("Foo", "Ctrl");
         // compile the new element
@@ -258,4 +266,3 @@ function registerController(moduleName, controllerName) {
         }
     }
 }
-
