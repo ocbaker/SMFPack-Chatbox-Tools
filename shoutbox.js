@@ -5,7 +5,6 @@ function defaultNotificationFormat(txt){
 }
 var templateToLoad;
 templateToLoad = templateToLoad || "https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/settings-update/settingsTemplate.html";
-console.log(templateToLoad);
 var notificationSettings = {
     phrases: ["ocbaker", "oliver", "admin", "mods", "moderator", "baker", "swear", "language"],
     general: true,
@@ -16,116 +15,117 @@ var notificationSettings = {
     generalFormat: defaultNotificationFormat,
     mentionFormat: defaultNotificationFormat
 };
-
-Shoutbox_PutMsgs = function Shoutbox_PutMsgs(XMLDoc) 
-{
-    if (Shoutbox.msgs !== false)
-        window.clearTimeout(Shoutbox.msgs);
-    if (XMLDoc && XMLDoc.getElementsByTagName("banned")[0]) 
+function loadChatbox(){
+    Shoutbox_PutMsgs = function Shoutbox_PutMsgs(XMLDoc) 
     {
-        setOuterHTML(document.getElementById("shoutbox_banned"), '');
-        document.getElementById("shoutbox_status").style.visibility = 'hidden';
-        document.getElementById("shoutbox_message").value = '';
-        document.getElementById("shoutbox_message").disabled = true;
-        return window.alert(Shoutbox.lang.banned);
-    }
-    var error = false;
-    if (XMLDoc && XMLDoc.getElementsByTagName("error")[0])
-        error = XMLDoc.getElementsByTagName("error")[0].childNodes[0].nodeValue;
-    if (!XMLDoc || !XMLDoc.getElementsByTagName("msgs")[0]) 
-    {
+        if (Shoutbox.msgs !== false)
+            window.clearTimeout(Shoutbox.msgs);
+        if (XMLDoc && XMLDoc.getElementsByTagName("banned")[0]) 
+        {
+            setOuterHTML(document.getElementById("shoutbox_banned"), '');
+            document.getElementById("shoutbox_status").style.visibility = 'hidden';
+            document.getElementById("shoutbox_message").value = '';
+            document.getElementById("shoutbox_message").disabled = true;
+            return window.alert(Shoutbox.lang.banned);
+        }
+        var error = false;
+        if (XMLDoc && XMLDoc.getElementsByTagName("error")[0])
+            error = XMLDoc.getElementsByTagName("error")[0].childNodes[0].nodeValue;
+        if (!XMLDoc || !XMLDoc.getElementsByTagName("msgs")[0]) 
+        {
+            if (!Shoutbox.hide) 
+            {
+                Shoutbox.msgs = window.setTimeout("Shoutbox_GetMsgs();", Shoutbox.refresh);
+                Shoutbox.loading = false;
+            }
+            document.getElementById("shoutbox_status").style.visibility = 'hidden';
+            if (error)
+                window.alert(error);
+            Shoutbox.first = false;
+            return;
+        }
+        var toReset = !Shoutbox.first && XMLDoc.getElementsByTagName("reset")[0];
+        if (!Shoutbox.ie) 
+        {
+            if (toReset) 
+            {
+                if (Shoutbox.msgdown)
+                    setInnerHTML(document.getElementById("shoutbox_banned"), '<table cellspacing="0" cellpadding="0" border="0" align="left"><tr><td valign="bottom" height="' + Shoutbox.height + '"><table id="shoutbox_table" cellspacing="0" cellpadding="2" border="0"><tr id="shoutbox_msgs"></tr></table></td></tr></table>');
+                else
+                    setInnerHTML(document.getElementById("shoutbox_banned"), '<table id="shoutbox_table" cellspacing="0" cellpadding="2" border="0" align="left"><thead id="shoutbox_msgs"></thead></table>');
+            }
+            setOuterHTML(document.getElementById("shoutbox_msgs"), XMLDoc.getElementsByTagName("msgs")[0].childNodes[0].nodeValue);
+        } 
+        else 
+        {
+            var msgs = '';
+            if (Shoutbox.msgdown) 
+            {
+                msgs += '<table cellspacing="0" cellpadding="0" border="0" align="left"><tr><td valign="bottom" height="' + Shoutbox.height + '"><table id="shoutbox_table" cellspacing="0" cellpadding="2" border="0">';
+                msgs += (toReset ? '' : getInnerHTML(document.getElementById("shoutbox_table"))) + XMLDoc.getElementsByTagName("msgs")[0].childNodes[0].nodeValue;
+                msgs += '</table></td></tr></table>';
+            } 
+            else 
+            {
+                msgs += '<table id="shoutbox_table" cellspacing="0" cellpadding="2" border="0" align="left">';
+                msgs += XMLDoc.getElementsByTagName("msgs")[0].childNodes[0].nodeValue + (toReset ? '' : getInnerHTML(document.getElementById("shoutbox_table")));
+                msgs += '</table>';
+            }
+            setInnerHTML(document.getElementById("shoutbox_banned"), msgs);
+        }
+        if (toReset) 
+        {
+            Shoutbox.currentmsg = 1;
+            Shoutbox.countmsgs = Shoutbox.maxmsgs = 0;
+        }
+        var count = parseInt(XMLDoc.getElementsByTagName("count")[0].childNodes[0].nodeValue);
+        if (Shoutbox.countmsgs + count > Shoutbox.keepmsgs) 
+        {
+            for (var i = Shoutbox.currentmsg; i < Shoutbox.currentmsg + Shoutbox.countmsgs + count - Shoutbox.keepmsgs; i++)
+                document.getElementById("shoutbox_row" + i).parentNode.removeChild(document.getElementById("shoutbox_row" + i));
+            Shoutbox.currentmsg += Shoutbox.countmsgs + count - Shoutbox.keepmsgs;
+        }
+        Shoutbox.maxmsgs += count;
+        Shoutbox.countmsgs = Shoutbox.countmsgs + count > Shoutbox.keepmsgs ? Shoutbox.keepmsgs : Shoutbox.countmsgs + count;
         if (!Shoutbox.hide) 
         {
             Shoutbox.msgs = window.setTimeout("Shoutbox_GetMsgs();", Shoutbox.refresh);
             Shoutbox.loading = false;
         }
         document.getElementById("shoutbox_status").style.visibility = 'hidden';
+        if (Shoutbox.msgdown && (document.getElementById("shoutbox_banned").scrollTop >= Shoutbox.scroll || Shoutbox.scroll == 0)) 
+        {
+            document.getElementById("shoutbox_banned").scrollTop = document.getElementById("shoutbox_banned").scrollHeight;
+            document.getElementById("shoutbox_banned").scrollTop = document.getElementById("shoutbox_banned").scrollHeight;
+            Shoutbox.scroll = document.getElementById("shoutbox_banned").scrollTop;
+        }
         if (error)
             window.alert(error);
+        if (!Shoutbox.first && XMLDoc.getElementsByTagName("newmsgs")[0]) {
+            var msgs = $(XMLDoc.getElementsByTagName("msgs")[0].childNodes[0].nodeValue);
+            if ((notificationSettings.notifyWhenChatActive || isHidden()) && (notificationSettings.general || notificationSettings.mentions))
+                msgs.each(function(a, b, c) {
+                    var txt = $(b).text();
+                    if (txt != "") {
+                        var stxt = txt.toLowerCase();
+                        var found = false;
+                        notificationSettings.phrases.forEach(function(phrase, i) {
+                            if (!found && stxt.indexOf(phrase.toLowerCase()) != -1)
+                                found = true;
+                        });
+
+                        if (found && notificationSettings.mentions)
+                            notifyMe("LoE Chat Mention", notificationSettings.mentionFormat(txt), notificationSettings.mentionTimeout);
+                        if (!(found && notificationSettings.mentions) && notificationSettings.general)
+                            notifyMe("LoE Chat", notificationSettings.generalFormat(txt), notificationSettings.generalTimeout);
+                    }
+
+                });
+            Shoutbox_NewMsgs();
+        }
         Shoutbox.first = false;
-        return;
-    }
-    var toReset = !Shoutbox.first && XMLDoc.getElementsByTagName("reset")[0];
-    if (!Shoutbox.ie) 
-    {
-        if (toReset) 
-        {
-            if (Shoutbox.msgdown)
-                setInnerHTML(document.getElementById("shoutbox_banned"), '<table cellspacing="0" cellpadding="0" border="0" align="left"><tr><td valign="bottom" height="' + Shoutbox.height + '"><table id="shoutbox_table" cellspacing="0" cellpadding="2" border="0"><tr id="shoutbox_msgs"></tr></table></td></tr></table>');
-            else
-                setInnerHTML(document.getElementById("shoutbox_banned"), '<table id="shoutbox_table" cellspacing="0" cellpadding="2" border="0" align="left"><thead id="shoutbox_msgs"></thead></table>');
-        }
-        setOuterHTML(document.getElementById("shoutbox_msgs"), XMLDoc.getElementsByTagName("msgs")[0].childNodes[0].nodeValue);
-    } 
-    else 
-    {
-        var msgs = '';
-        if (Shoutbox.msgdown) 
-        {
-            msgs += '<table cellspacing="0" cellpadding="0" border="0" align="left"><tr><td valign="bottom" height="' + Shoutbox.height + '"><table id="shoutbox_table" cellspacing="0" cellpadding="2" border="0">';
-            msgs += (toReset ? '' : getInnerHTML(document.getElementById("shoutbox_table"))) + XMLDoc.getElementsByTagName("msgs")[0].childNodes[0].nodeValue;
-            msgs += '</table></td></tr></table>';
-        } 
-        else 
-        {
-            msgs += '<table id="shoutbox_table" cellspacing="0" cellpadding="2" border="0" align="left">';
-            msgs += XMLDoc.getElementsByTagName("msgs")[0].childNodes[0].nodeValue + (toReset ? '' : getInnerHTML(document.getElementById("shoutbox_table")));
-            msgs += '</table>';
-        }
-        setInnerHTML(document.getElementById("shoutbox_banned"), msgs);
-    }
-    if (toReset) 
-    {
-        Shoutbox.currentmsg = 1;
-        Shoutbox.countmsgs = Shoutbox.maxmsgs = 0;
-    }
-    var count = parseInt(XMLDoc.getElementsByTagName("count")[0].childNodes[0].nodeValue);
-    if (Shoutbox.countmsgs + count > Shoutbox.keepmsgs) 
-    {
-        for (var i = Shoutbox.currentmsg; i < Shoutbox.currentmsg + Shoutbox.countmsgs + count - Shoutbox.keepmsgs; i++)
-            document.getElementById("shoutbox_row" + i).parentNode.removeChild(document.getElementById("shoutbox_row" + i));
-        Shoutbox.currentmsg += Shoutbox.countmsgs + count - Shoutbox.keepmsgs;
-    }
-    Shoutbox.maxmsgs += count;
-    Shoutbox.countmsgs = Shoutbox.countmsgs + count > Shoutbox.keepmsgs ? Shoutbox.keepmsgs : Shoutbox.countmsgs + count;
-    if (!Shoutbox.hide) 
-    {
-        Shoutbox.msgs = window.setTimeout("Shoutbox_GetMsgs();", Shoutbox.refresh);
-        Shoutbox.loading = false;
-    }
-    document.getElementById("shoutbox_status").style.visibility = 'hidden';
-    if (Shoutbox.msgdown && (document.getElementById("shoutbox_banned").scrollTop >= Shoutbox.scroll || Shoutbox.scroll == 0)) 
-    {
-        document.getElementById("shoutbox_banned").scrollTop = document.getElementById("shoutbox_banned").scrollHeight;
-        document.getElementById("shoutbox_banned").scrollTop = document.getElementById("shoutbox_banned").scrollHeight;
-        Shoutbox.scroll = document.getElementById("shoutbox_banned").scrollTop;
-    }
-    if (error)
-        window.alert(error);
-    if (!Shoutbox.first && XMLDoc.getElementsByTagName("newmsgs")[0]) {
-        var msgs = $(XMLDoc.getElementsByTagName("msgs")[0].childNodes[0].nodeValue);
-        if ((notificationSettings.notifyWhenChatActive || isHidden()) && (notificationSettings.general || notificationSettings.mentions))
-            msgs.each(function(a, b, c) {
-                var txt = $(b).text();
-                if (txt != "") {
-                    var stxt = txt.toLowerCase();
-                    var found = false;
-                    notificationSettings.phrases.forEach(function(phrase, i) {
-                        if (!found && stxt.indexOf(phrase.toLowerCase()) != -1)
-                            found = true;
-                    });
-                    
-                    if (found && notificationSettings.mentions)
-                        notifyMe("LoE Chat Mention", notificationSettings.mentionFormat(txt), notificationSettings.mentionTimeout);
-                    if (!(found && notificationSettings.mentions) && notificationSettings.general)
-                        notifyMe("LoE Chat", notificationSettings.generalFormat(txt), notificationSettings.generalTimeout);
-                }
-            
-            });
-        Shoutbox_NewMsgs();
-    }
-    Shoutbox.first = false;
-};
+    };
+}
 
 notifyMe = function notifyMe(title, msg, timeout) {
     // Let's check if the browser supports notifications
@@ -184,8 +184,12 @@ function isHidden() {
     return document[prop];
 }
 
+function loadSettings(localStorageService){
+
+}
+
 function loadAngular() {
-    
+
     angular.module('Foo', ['LocalStorageModule'], function($controllerProvider) {
         controllerProvider = $controllerProvider;
     });
@@ -205,9 +209,9 @@ function loadAngular() {
     myApp.controller('Ctrl', function($scope, $rootScope, localStorageService) {
         console.log(localStorageService);
         $scope.settings = notificationSettings;
-        $scope.msg = "It works! rootScope is " + $rootScope.$id + 
-        ", should be " + $('#shoutbox .content').scope().$id;
         console.log($scope);
+        loadChatbox();
+        notifyMe("LoE Chat", "Loaded Notifications", 10000);
     });
     // Load html file with content that uses Ctrl controller
     $('<div id="nSettings">').appendTo('#shoutbox .content');
@@ -248,4 +252,3 @@ function registerController(moduleName, controllerName) {
     }
 }
 
-notifyMe("LoE Chat", "Loaded Notifications", 10000);
