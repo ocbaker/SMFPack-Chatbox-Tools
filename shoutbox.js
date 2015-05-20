@@ -30,8 +30,8 @@ var notificationSettings = {
     chatHeight: 180
 };
 
-if(setUserSettings != undefined)
-    setUserSettings();
+if(Shoutbox.setUserSettings != undefined)
+    Shoutbox.setUserSettings();
 
 var ret = [];
 var people = [];
