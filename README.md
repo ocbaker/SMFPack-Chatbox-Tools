@@ -15,4 +15,4 @@ To have mentions remain on your desktop until you close them set the timeout to 
 
 ### How to use
 
-Load the Userscript `shoutbox.user.js` into your browser (For chrome you can use an extension like Tampermonkey)
+Load the Userscript [shoutbox.user.js](https://raw.githubusercontent.com/ocbaker/SMFPack-Chatbox-Tools/dist/shoutbox.user.js) into your browser (For chrome you can use an extension like Tampermonkey)
