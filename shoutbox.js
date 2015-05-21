@@ -300,7 +300,7 @@ function loadAngular() {
     });
 
     // Load html file with content that uses Ctrl controller
-    $('<div id="nSettings">').appendTo('#shoutbox .content');
+    $('<div id="nSettings" class="bootstrap">').appendTo('#shoutbox .content');
     $('#shoutbox .content').attr("ng-controller", "Ctrl");
     $('#shoutbox .content').attr("id", "ctrl");
     $('#shoutbox_banned').attr("ng-style", "getChatStyle()");
@@ -326,7 +326,7 @@ $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', "ht
 jQuery.getScript("//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.2/angular.min.js", function() {
     jQuery.getScript(getGitScript("jeff-collins/ment.io/master/dist/mentio.js"), function() {
         jQuery.getScript(getGitScript("grevory/angular-local-storage/master/dist/angular-local-storage.js"), function() {
-            jQuery.getScript(getGitScript("jeff-collins/ment.io/master/dist/templates.js"), function() {
+            jQuery.getScript(getRepoScript("templates.js"), function() {
                 jQuery.getScript(getGitScript("bartaz/sandbox.js/master/jquery.highlight.js"), function() {
                     jQuery.getScript("https://cdnjs.cloudflare.com/ajax/libs/ng-tags-input/2.3.0/ng-tags-input.js", function() {
                         jQuery.getScript(getGitScript("angular-ui/bootstrap/gh-pages/ui-bootstrap-0.13.0.js"), function() {
