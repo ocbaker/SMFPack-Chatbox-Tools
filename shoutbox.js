@@ -24,6 +24,15 @@ function defaultNotificationFormat(txt) {
 }
 
 var accountName = $(".greeting > span").text();
+
+if(accountName == ""){
+    $.get("index.php?action=profile", function(data) {
+      var data = $(data);
+      var text = data.find(".username").text();
+      accountName = text.substr(0, text.indexOf(data.find(".username .position").text()) - 1);
+    });
+}
+
 var notificationFunctions = {
     generalFormat: defaultNotificationFormat,
     mentionFormat: defaultNotificationFormat    
