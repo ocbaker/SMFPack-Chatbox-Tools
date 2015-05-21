@@ -7,13 +7,4 @@
 // @copyright  2012+, You
 // ==/UserScript==
 
-
-Shoutbox.setUserSettings = function setUserSettings(){
-    notificationSettings.notifyWhenChatActive=true;
-    notificationSettings.generalTimeout=10000;
-    notificationSettings.mentionTimeout=0;
-    notificationSettings.chatHeight=500;
-    notificationSettings.phrases = ["ocbaker", "oliver", "admin", "mods", "moderator", "baker", "swear", "language"];
-}
-
-jQuery.getScript("https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/master/shoutbox.js", function(){});
+jQuery.getScript("https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/tags-update/shoutbox.js", function(){});
