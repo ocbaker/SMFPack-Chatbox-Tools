@@ -13,14 +13,6 @@ This script will also sticky notifications to the desktop if they contain a phra
 
 To have mentions remain on your desktop until you close them set the timeout to 0.
 
-Easy way to use:
+### How to use
 
-Add the following as a bookmarklet: (Select the blocked text and drag into your bookmark bar)
-
-`javascript:(function(){jQuery.getScript("https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/master/shoutbox.js",function(){notificationSettings.phrases=["admin"];notifyMe("LoE Chat","Loaded Notifications",10000);});})();`
-
-This: `["admin"]` can be set to a list of words you want as mentions. IE: `["admin","ocbaker"]`
-
-If you want to modify any of the settings just add that setting after phrases. As an example this bookmarklet would always show notifications even if you have the chat active:
-
-`javascript:(function(){jQuery.getScript("https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/master/shoutbox.js",function(){notificationSettings.phrases=["admin"];notificationSettings.notifyWhenChatActive=true;notifyMe("LoE Chat","Loaded Notifications",10000);});})();`
+Load the Userscript `shoutbox.user.js` into your browser (For chrome you can use an extension like Tampermonkey)
