@@ -6,6 +6,7 @@
 // @match      http://forum.legendsofequestria.com/index.php?action=chatpage
 // @match      http://forum.legendsofequestria.com/index.php?action=shoutbox
 // @copyright  2012+, You
+// @run-at document-end
 // ==/UserScript==
 
 jQuery.getScript("https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/master/shoutbox.js", function(){});
