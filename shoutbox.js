@@ -1,4 +1,4 @@
-var branch = "tags-update";
+var branch = "master";
 
 function getGitScript(script) {
     return "https://rawgit.com/" + script;
