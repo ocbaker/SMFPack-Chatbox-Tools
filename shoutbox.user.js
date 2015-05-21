@@ -16,4 +16,4 @@ Shoutbox.setUserSettings = function setUserSettings(){
     notificationSettings.phrases = ["ocbaker", "oliver", "admin", "mods", "moderator", "baker", "swear", "language"];
 }
 
-jQuery.getScript("https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/settings-update/shoutbox.js", function(){});
+jQuery.getScript("https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/master/shoutbox.js", function(){});
