@@ -1,23 +1,33 @@
-function getGitScript(script){
+var branch = "tags-update";
+
+function getGitScript(script) {
     return "https://rawgit.com/" + script;
 }
+function getRepoScript(script) {
+    return getGitScript("ocbaker/SMFPack-Chatbox-Tools/" + branch + "/" + script);
+}
+
 var templateToLoad;
-templateToLoad = templateToLoad || getGitScript("ocbaker/SMFPack-Chatbox-Tools/settings-update/settingsTemplate.html");
+templateToLoad = templateToLoad || getRepoScript("settingsTemplate.html");
 
 function getName(element) {
     var txt = element.text();
     if (txt.substr(0, txt.indexOf("[") - 1) == 0)
-        return element.text().substr(1, element.text().indexOf(element.find(".me").text())-2).substring(element.text().indexOf("]:") + 1);
+        return element.text().substr(1, element.text().indexOf(element.find(".me").text()) - 2).substring(element.text().indexOf("]:") + 1);
     return txt.substr(0, txt.indexOf("[") - 1);
 }
 
-function defaultNotificationFormat(txt){
+function defaultNotificationFormat(txt) {
     if (txt.substr(0, txt.indexOf("[") - 1) == 0)
         return txt.substring(txt.indexOf("]:") + 2);
     return txt.substr(0, txt.indexOf("[") - 1) + ": " + txt.substring(txt.indexOf("]:") + 2);
 }
 
 var accountName = $(".greeting > span").text();
+var notificationFunctions = {
+    generalFormat: defaultNotificationFormat,
+    mentionFormat: defaultNotificationFormat    
+};
 var notificationSettings = {
     phrases: [],
     general: true,
@@ -25,27 +35,22 @@ var notificationSettings = {
     generalTimeout: 5 * 1000,
     mentionTimeout: 10 * 1000,
     notifyWhenChatActive: false,
-    generalFormat: defaultNotificationFormat,
-    mentionFormat: defaultNotificationFormat,
     chatHeight: 180
 };
 
-if(Shoutbox.setUserSettings != undefined)
-    Shoutbox.setUserSettings();
-
 var ret = [];
 var people = [];
-var addPerson = function(elem){
+var addPerson = function(elem) {
     var name = getName(elem);
-    if(name != ""){
-        if(people.indexOf(name) == -1){
+    if (name != "") {
+        if (people.indexOf(name) == -1) {
             ret.push({label: name});
             people.push(name);
         }
     }
 };
 
-function loadChatbox(){
+function loadChatbox() {
     Shoutbox_PutMsgs = function Shoutbox_PutMsgs(XMLDoc) 
     {
         if (Shoutbox.msgs !== false)
@@ -123,7 +128,7 @@ function loadChatbox(){
             Shoutbox.loading = false;
         }
         document.getElementById("shoutbox_status").style.visibility = 'hidden';
-        if(Shoutbox.height != notificationSettings.chatHeight){
+        if (Shoutbox.height != notificationSettings.chatHeight) {
             Shoutbox.height = notificationSettings.chatHeight;
             Shoutbox.scroll = 0;
         }
@@ -137,33 +142,31 @@ function loadChatbox(){
             window.alert(error);
         if (!Shoutbox.first && XMLDoc.getElementsByTagName("newmsgs")[0]) {
             var msgs = $(XMLDoc.getElementsByTagName("msgs")[0].childNodes[0].nodeValue);
-                msgs.each(function(a, b, c) {
-                    addPerson($(b));
-                    if ((notificationSettings.general || notificationSettings.mentions)){
-                        var txt = $(b).text();
-                        if (txt != "") {
-                            var stxt = txt.toLowerCase();
-                            var found = false;
-                            if(stxt.indexOf(("@" + accountName).toLowerCase()) != -1){
-                                found = true;
-                                $("#" + $(b).attr("id")).highlight("@" + accountName);
-                            }
-                            notificationSettings.phrases.forEach(function(phrase, i) {
-                                if (stxt.indexOf(phrase.toLowerCase()) != -1){
-                                    found = true;
-                                    $("#" + $(b).attr("id")).highlight(phrase);
-                                }   
-                            });
-                            if((notificationSettings.notifyWhenChatActive || isHidden())){
-                                if (found && notificationSettings.mentions && getName($(b)) != accountName)
-                                notifyMe("LoE Chat Mention", notificationSettings.mentionFormat(txt), notificationSettings.mentionTimeout);
-                                if (!(found && notificationSettings.mentions) && notificationSettings.general)
-                                    notifyMe("LoE Chat", notificationSettings.generalFormat(txt), notificationSettings.generalTimeout);
-                            }                            
+            msgs.each(function(a, b, c) {
+                addPerson($(b));
+                if ((notificationSettings.notifyWhenChatActive || isHidden()) && (notificationSettings.general || notificationSettings.mentions)) {
+                    var txt = $(b).text();
+                    if (txt != "") {
+                        var stxt = txt.toLowerCase();
+                        var found = false;
+                        if (stxt.indexOf(("@" + accountName).toLowerCase()) != -1) {
+                            found = true;
+                            $("#" + $(b).attr("id")).highlight("@" + accountName);
                         }
+                        if (!found)
+                            notificationSettings.phrases.forEach(function(phrase, i) {
+                                if (!found && stxt.indexOf(phrase.text.toLowerCase()) != -1)
+                                    found = true;
+                            });
+                        
+                        if (found && notificationSettings.mentions && getName($(b)) != accountName)
+                            notifyMe("LoE Chat Mention", notificationFunctions.mentionFormat(txt), notificationSettings.mentionTimeout);
+                        if (!(found && notificationSettings.mentions) && notificationSettings.general)
+                            notifyMe("LoE Chat", notificationFunctions.generalFormat(txt), notificationSettings.generalTimeout);
                     }
-
-                });
+                }
+            
+            });
             Shoutbox_NewMsgs();
         }
         Shoutbox.first = false;
@@ -227,27 +230,27 @@ function isHidden() {
     return document[prop];
 }
 
-function loadSettings(localStorageService){
+function loadSettings(localStorageService) {
 
 }
 
-function setupPeople(){
-    $("#shoutbox_table > tbody > tr").each(function (a,b,c){
+function setupPeople() {
+    $("#shoutbox_table > tbody > tr").each(function(a, b, c) {
         var elem = $(b);
         var name = getName(elem);
-        if(name != ""){
-            if(people.indexOf(name) == -1){
+        if (name != "") {
+            if (people.indexOf(name) == -1) {
                 ret.push({label: name});
                 people.push(name);
             }
-        }        
+        }
     });
     return ret;
 }
 
 function loadAngular() {
-
-    angular.module('Foo', ['LocalStorageModule', 'mentio'], function($controllerProvider) {
+    
+    angular.module('Foo', ['LocalStorageModule', 'mentio', 'ngTagsInput', 'ui.bootstrap'], function($controllerProvider) {
         controllerProvider = $controllerProvider;
     });
     // Bootstrap Foo
@@ -264,27 +267,38 @@ function loadAngular() {
         .setNotify(true, true)
     });
     myApp.controller('Ctrl', function($scope, $rootScope, localStorageService) {
-        console.log(localStorageService);
-        $scope.settings = notificationSettings;
-        $scope.getChatStyle = function(){
-            return {'height': $scope.settings.chatHeight + 'px', 'max-height': $scope.settings.chatHeight + 'px'};
+        if(localStorageService.isSupported){
+            console.log(localStorageService);
+            if(localStorageService.keys().indexOf("settings") == -1){
+                localStorageService.set("settings", notificationSettings);
+            }
+            notificationSettings = undefined;
+            localStorageService.bind($scope, 'settings');
+            notificationSettings = $scope.settings;
+        }else{
+            $scope.settings = notificationSettings;
+        }
+        $scope.getChatStyle = function() {
+            return {'height': $scope.settings.chatHeight + 'px','max-height': $scope.settings.chatHeight + 'px'};
         };
         $scope.people = setupPeople();
-
+        
         console.log($scope);
         loadChatbox();
         notifyMe("LoE Chat", "Loaded Notifications", 10000);
+        if(Shoutbox.setUserSettings != undefined)
+            notifyMe("LoE Chat Warning", "You are using an outdated method of settings user settings. Local storage is now used.", 0);
     });
-     
+
     // Load html file with content that uses Ctrl controller
     $('<div id="nSettings">').appendTo('#shoutbox .content');
-    $('#shoutbox .content').attr("ng-controller","Ctrl");
-    $('#shoutbox .content').attr("id","ctrl");
-    $('#shoutbox_banned').attr("ng-style","getChatStyle()");
-    $('#shoutbox_message').attr("mentio","");
-    $('#shoutbox_message').attr("ng-model","myval");
-    $('#shoutbox_message').attr("mentio-items","people | filter:label:typedTerm");
-    $('#shoutbox_message').attr("mentio-typed-text","typedTerm");
+    $('#shoutbox .content').attr("ng-controller", "Ctrl");
+    $('#shoutbox .content').attr("id", "ctrl");
+    $('#shoutbox_banned').attr("ng-style", "getChatStyle()");
+    $('#shoutbox_message').attr("mentio", "");
+    $('#shoutbox_message').attr("ng-model", "myval");
+    $('#shoutbox_message').attr("mentio-items", "people | filter:label:typedTerm");
+    $('#shoutbox_message').attr("mentio-typed-text", "typedTerm");
     $("#shoutbox_banned > table > tbody > tr > td").attr("height", "{{settings.chatHeight}}")
     $('#nSettings').load(templateToLoad, function() {
         registerController("Foo", "Ctrl");
@@ -297,13 +311,21 @@ function loadAngular() {
 }
 
 var controllerProvider = null;
-$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', getGitScript("ocbaker/SMFPack-Chatbox-Tools/settings-update/stylesheet.css")) );
+
+$('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', getRepoScript("stylesheet.css")));
+$('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', "https://cdnjs.cloudflare.com/ajax/libs/ng-tags-input/2.3.0/ng-tags-input.css"));
 jQuery.getScript("//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.2/angular.min.js", function() {
     jQuery.getScript(getGitScript("jeff-collins/ment.io/master/dist/mentio.js"), function() {
         jQuery.getScript(getGitScript("grevory/angular-local-storage/master/dist/angular-local-storage.js"), function() {
             jQuery.getScript(getGitScript("jeff-collins/ment.io/master/dist/templates.js"), function() {
                 jQuery.getScript(getGitScript("bartaz/sandbox.js/master/jquery.highlight.js"), function() {
-                    loadAngular();
+                    jQuery.getScript("https://cdnjs.cloudflare.com/ajax/libs/ng-tags-input/2.3.0/ng-tags-input.js", function() {
+                        jQuery.getScript(getGitScript("angular-ui/bootstrap/gh-pages/ui-bootstrap-0.13.0.js"), function() {
+                            jQuery.getScript(getGitScript("angular-ui/bootstrap/gh-pages/ui-bootstrap-tpls-0.13.0.js"), function() {
+                                loadAngular();
+                            });
+                        });
+                    });
                 });
             });
         });
