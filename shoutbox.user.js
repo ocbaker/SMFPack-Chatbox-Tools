@@ -8,4 +8,4 @@
 // @copyright  2012+, You
 // ==/UserScript==
 
-jQuery.getScript("https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/tags-update/shoutbox.js", function(){});
+jQuery.getScript("https://rawgit.com/ocbaker/SMFPack-Chatbox-Tools/master/shoutbox.js", function(){});
