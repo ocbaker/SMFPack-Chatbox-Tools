@@ -1,4 +1,4 @@
-var branch = "master";
+var branch = "release-0.3";
 
 function getGitScript(script) {
     return "https://rawgit.com/" + script;
