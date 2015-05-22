@@ -27,15 +27,15 @@ var accountName = $(".greeting > span").text();
 
 if (accountName == "") {
     $.get("index.php?action=profile", function(data) {
-        var data = $(data);
-        var text = data.find(".username").text();
-        accountName = text.substr(0, text.indexOf(data.find(".username .position").text()) - 1);
+      var data = $(data);
+      var text = data.find(".username").text();
+      accountName = text.substr(0, text.indexOf(data.find(".username .position").text()) - 1);
     });
 }
 
 var notificationFunctions = {
     generalFormat: defaultNotificationFormat,
-    mentionFormat: defaultNotificationFormat
+    mentionFormat: defaultNotificationFormat    
 };
 var notificationSettings = {
     phrases: [],
@@ -162,12 +162,12 @@ function loadChatbox() {
                             found = true;
                             $("#" + $(b).attr("id")).highlight("@" + accountName);
                         }
-                        notificationSettings.phrases.forEach(function(phrase, i) {
+                            notificationSettings.phrases.forEach(function(phrase, i) {
                             if (stxt.indexOf(phrase.text.toLowerCase()) != -1) {
-                                found = true;
-                                $("#" + $(b).attr("id")).highlight(phrase);
-                            }
-                        });
+                                    found = true;
+                                    $("#" + $(b).attr("id")).highlight(phrase);
+                                }
+                            });
                         
                         if (found && notificationSettings.mentions && getName($(b)) != accountName)
                             notifyMe("LoE Chat Mention", notificationFunctions.mentionFormat(txt), notificationSettings.mentionTimeout);
@@ -327,7 +327,7 @@ $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', "ht
 jQuery.getScript("//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.2/angular.min.js", function() {
     jQuery.getScript(getGitScript("jeff-collins/ment.io/master/dist/mentio.js"), function() {
         jQuery.getScript(getGitScript("grevory/angular-local-storage/master/dist/angular-local-storage.js"), function() {
-            jQuery.getScript(getGitScript("jeff-collins/ment.io/master/dist/templates.js"), function() {
+            jQuery.getScript(getRepoScript("templates.js"), function() {
                 jQuery.getScript(getGitScript("bartaz/sandbox.js/master/jquery.highlight.js"), function() {
                     jQuery.getScript("https://cdnjs.cloudflare.com/ajax/libs/ng-tags-input/2.3.0/ng-tags-input.js", function() {
                         jQuery.getScript(getGitScript("angular-ui/bootstrap/gh-pages/ui-bootstrap-0.13.0.js"), function() {
