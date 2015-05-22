@@ -164,8 +164,10 @@ function loadChatbox() {
                         }
                         if (!found)
                             notificationSettings.phrases.forEach(function(phrase, i) {
-                                if (!found && stxt.indexOf(phrase.text.toLowerCase()) != -1)
+                                if (stxt.indexOf(phrase.text.toLowerCase()) != -1){
                                     found = true;
+                                    $("#" + $(b).attr("id")).highlight(phrase);
+                                }
                             });
                         
                         if (found && notificationSettings.mentions && getName($(b)) != accountName)
