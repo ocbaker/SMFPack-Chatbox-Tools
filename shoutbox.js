@@ -1,4 +1,4 @@
-var branch = "master";
+var branch = "release-0.3";
 
 function getGitScript(script) {
     return "https://rawgit.com/" + script;
@@ -25,17 +25,17 @@ function defaultNotificationFormat(txt) {
 
 var accountName = $(".greeting > span").text();
 
-if(accountName == ""){
+if (accountName == "") {
     $.get("index.php?action=profile", function(data) {
-      var data = $(data);
-      var text = data.find(".username").text();
-      accountName = text.substr(0, text.indexOf(data.find(".username .position").text()) - 1);
+        var data = $(data);
+        var text = data.find(".username").text();
+        accountName = text.substr(0, text.indexOf(data.find(".username .position").text()) - 1);
     });
 }
 
 var notificationFunctions = {
     generalFormat: defaultNotificationFormat,
-    mentionFormat: defaultNotificationFormat    
+    mentionFormat: defaultNotificationFormat
 };
 var notificationSettings = {
     phrases: [],
@@ -162,11 +162,12 @@ function loadChatbox() {
                             found = true;
                             $("#" + $(b).attr("id")).highlight("@" + accountName);
                         }
-                        if (!found)
-                            notificationSettings.phrases.forEach(function(phrase, i) {
-                                if (!found && stxt.indexOf(phrase.text.toLowerCase()) != -1)
-                                    found = true;
-                            });
+                        notificationSettings.phrases.forEach(function(phrase, i) {
+                            if (stxt.indexOf(phrase.text.toLowerCase()) != -1) {
+                                found = true;
+                                $("#" + $(b).attr("id")).highlight(phrase);
+                            }
+                        });
                         
                         if (found && notificationSettings.mentions && getName($(b)) != accountName)
                             notifyMe("LoE Chat Mention", notificationFunctions.mentionFormat(txt), notificationSettings.mentionTimeout);
@@ -276,15 +277,15 @@ function loadAngular() {
         .setNotify(true, true)
     });
     myApp.controller('Ctrl', function($scope, $rootScope, localStorageService) {
-        if(localStorageService.isSupported){
+        if (localStorageService.isSupported) {
             console.log(localStorageService);
-            if(localStorageService.keys().indexOf("settings") == -1){
+            if (localStorageService.keys().indexOf("settings") == -1) {
                 localStorageService.set("settings", notificationSettings);
             }
             notificationSettings = undefined;
             localStorageService.bind($scope, 'settings');
             notificationSettings = $scope.settings;
-        }else{
+        } else {
             $scope.settings = notificationSettings;
         }
         $scope.getChatStyle = function() {
@@ -295,12 +296,12 @@ function loadAngular() {
         console.log($scope);
         loadChatbox();
         notifyMe("LoE Chat", "Loaded Notifications", 10000);
-        if(Shoutbox.setUserSettings != undefined)
+        if (Shoutbox.setUserSettings != undefined)
             notifyMe("LoE Chat Warning", "You are using an outdated method of settings user settings. Local storage is now used.", 0);
     });
 
     // Load html file with content that uses Ctrl controller
-    $('<div id="nSettings" class="bootstrap">').appendTo('#shoutbox .content');
+    $('<div id="nSettings">').appendTo('#shoutbox .content');
     $('#shoutbox .content').attr("ng-controller", "Ctrl");
     $('#shoutbox .content').attr("id", "ctrl");
     $('#shoutbox_banned').attr("ng-style", "getChatStyle()");
@@ -326,7 +327,7 @@ $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', "ht
 jQuery.getScript("//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.2/angular.min.js", function() {
     jQuery.getScript(getGitScript("jeff-collins/ment.io/master/dist/mentio.js"), function() {
         jQuery.getScript(getGitScript("grevory/angular-local-storage/master/dist/angular-local-storage.js"), function() {
-            jQuery.getScript(getRepoScript("templates.js"), function() {
+            jQuery.getScript(getGitScript("jeff-collins/ment.io/master/dist/templates.js"), function() {
                 jQuery.getScript(getGitScript("bartaz/sandbox.js/master/jquery.highlight.js"), function() {
                     jQuery.getScript("https://cdnjs.cloudflare.com/ajax/libs/ng-tags-input/2.3.0/ng-tags-input.js", function() {
                         jQuery.getScript(getGitScript("angular-ui/bootstrap/gh-pages/ui-bootstrap-0.13.0.js"), function() {
