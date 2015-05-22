@@ -301,7 +301,7 @@ function loadAngular() {
     });
 
     // Load html file with content that uses Ctrl controller
-    $('<div id="nSettings">').appendTo('#shoutbox .content');
+    $('<div id="nSettings" class="bootstrap">').appendTo('#shoutbox .content');
     $('#shoutbox .content').attr("ng-controller", "Ctrl");
     $('#shoutbox .content').attr("id", "ctrl");
     $('#shoutbox_banned').attr("ng-style", "getChatStyle()");
