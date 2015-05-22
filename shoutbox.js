@@ -25,7 +25,7 @@ function defaultNotificationFormat(txt) {
 
 var accountName = $(".greeting > span").text();
 
-if(accountName == ""){
+if (accountName == "") {
     $.get("index.php?action=profile", function(data) {
       var data = $(data);
       var text = data.find(".username").text();
@@ -162,9 +162,8 @@ function loadChatbox() {
                             found = true;
                             $("#" + $(b).attr("id")).highlight("@" + accountName);
                         }
-                        if (!found)
                             notificationSettings.phrases.forEach(function(phrase, i) {
-                                if (stxt.indexOf(phrase.text.toLowerCase()) != -1){
+                            if (stxt.indexOf(phrase.text.toLowerCase()) != -1) {
                                     found = true;
                                     $("#" + $(b).attr("id")).highlight(phrase);
                                 }
@@ -278,15 +277,15 @@ function loadAngular() {
         .setNotify(true, true)
     });
     myApp.controller('Ctrl', function($scope, $rootScope, localStorageService) {
-        if(localStorageService.isSupported){
+        if (localStorageService.isSupported) {
             console.log(localStorageService);
-            if(localStorageService.keys().indexOf("settings") == -1){
+            if (localStorageService.keys().indexOf("settings") == -1) {
                 localStorageService.set("settings", notificationSettings);
             }
             notificationSettings = undefined;
             localStorageService.bind($scope, 'settings');
             notificationSettings = $scope.settings;
-        }else{
+        } else {
             $scope.settings = notificationSettings;
         }
         $scope.getChatStyle = function() {
@@ -297,12 +296,12 @@ function loadAngular() {
         console.log($scope);
         loadChatbox();
         notifyMe("LoE Chat", "Loaded Notifications", 10000);
-        if(Shoutbox.setUserSettings != undefined)
+        if (Shoutbox.setUserSettings != undefined)
             notifyMe("LoE Chat Warning", "You are using an outdated method of settings user settings. Local storage is now used.", 0);
     });
 
     // Load html file with content that uses Ctrl controller
-    $('<div id="nSettings" class="bootstrap">').appendTo('#shoutbox .content');
+    $('<div id="nSettings">').appendTo('#shoutbox .content');
     $('#shoutbox .content').attr("ng-controller", "Ctrl");
     $('#shoutbox .content').attr("id", "ctrl");
     $('#shoutbox_banned').attr("ng-style", "getChatStyle()");
