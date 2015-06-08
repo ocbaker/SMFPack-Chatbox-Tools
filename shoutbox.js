@@ -12,9 +12,16 @@ templateToLoad = templateToLoad || getRepoScript("settingsTemplate.html");
 
 function getName(element) {
     var txt = element.text();
-    if (txt.substr(0, txt.indexOf("[") - 1) == 0)
+    if (txt.substr(0, txt.indexOf("[") - 1) == 0) //Me Text
         return element.text().substr(1, element.text().indexOf(element.find(".me").text()) - 2).substring(element.text().indexOf("]:") + 1);
     return txt.substr(0, txt.indexOf("[") - 1);
+}
+
+function getMessage(element) {
+    var txt = element.text();
+    if (txt.substr(0, txt.indexOf("[") - 1) == 0) //Me Text
+        return element.text().substring(element.text().indexOf(element.find(".me").text()));
+    return txt.substring(txt.indexOf("]:") + 2);
 }
 
 function defaultNotificationFormat(txt) {
@@ -158,25 +165,29 @@ function loadChatbox() {
                 if ((notificationSettings.notifyWhenChatActive || isHidden()) && (notificationSettings.general || notificationSettings.mentions)) {
                     var txt = $(b).text();
                     if (txt != "") {
-                        var stxt = txt.toLowerCase();
-                        var found = false;
-                        if (stxt.indexOf(("@" + accountName).toLowerCase()) != -1) {
-                            found = true;
-                            if(notificationSettings.highlightAccount)
-                                $("#" + $(b).attr("id")).highlight("@" + accountName);
+                        var name = getName($(b));
+                        if(name != accountName){
+                            var msg = $($("#" + $(b).attr("id") + " td")[1]);
+                            var stxt = getMessage($(b));
+                            var found = false;
+                            if (stxt.indexOf(("@" + accountName).toLowerCase()) != -1) {
+                                found = true;
+                                if(notificationSettings.highlightAccount && name != accountName)
+                                    msg.highlight("@" + accountName);
+                            }
+                                notificationSettings.phrases.forEach(function(phrase, i) {
+                                if (stxt.indexOf(phrase.text.toLowerCase()) != -1) {
+                                        found = true;
+                                        if(notificationSettings.highlightPhrases && name != accountName)
+                                            msg.highlight(phrase.text);
+                                    }
+                                });
+                            
+                            if (found && notificationSettings.mentions && name != accountName)
+                                notifyMe("LoE Chat Mention", notificationFunctions.mentionFormat(txt), notificationSettings.mentionTimeout);
+                            if (!(found && notificationSettings.mentions) && notificationSettings.general)
+                                notifyMe("LoE Chat", notificationFunctions.generalFormat(txt), notificationSettings.generalTimeout);
                         }
-                            notificationSettings.phrases.forEach(function(phrase, i) {
-                            if (stxt.indexOf(phrase.text.toLowerCase()) != -1) {
-                                    found = true;
-                                    if(notificationSettings.highlightPhrases)
-                                        $("#" + $(b).attr("id")).highlight(phrase.text);
-                                }
-                            });
-                        
-                        if (found && notificationSettings.mentions && getName($(b)) != accountName)
-                            notifyMe("LoE Chat Mention", notificationFunctions.mentionFormat(txt), notificationSettings.mentionTimeout);
-                        if (!(found && notificationSettings.mentions) && notificationSettings.general)
-                            notifyMe("LoE Chat", notificationFunctions.generalFormat(txt), notificationSettings.generalTimeout);
                     }
                 }
             
