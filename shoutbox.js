@@ -168,7 +168,7 @@ function loadChatbox() {
                         var name = getName($(b));
                         if(name != accountName){
                             var msg = $($("#" + $(b).attr("id") + " td")[1]);
-                            var stxt = getMessage($(b));
+                            var stxt = getMessage($(b)).toLowerCase();
                             var found = false;
                             if (stxt.indexOf(("@" + accountName).toLowerCase()) != -1) {
                                 found = true;
