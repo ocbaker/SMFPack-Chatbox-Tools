@@ -1,4 +1,4 @@
-var branch = "release-0.3";
+var branch = "release-0.4";
 
 function getGitScript(script) {
     return "https://rawgit.com/" + script;
@@ -44,7 +44,9 @@ var notificationSettings = {
     generalTimeout: 5 * 1000,
     mentionTimeout: 10 * 1000,
     notifyWhenChatActive: false,
-    chatHeight: 180
+    chatHeight: 180,
+    highlightAccount: true,
+    highlightPhrases: true
 };
 
 var ret = [];
@@ -160,12 +162,14 @@ function loadChatbox() {
                         var found = false;
                         if (stxt.indexOf(("@" + accountName).toLowerCase()) != -1) {
                             found = true;
-                            $("#" + $(b).attr("id")).highlight("@" + accountName);
+                            if(notificationSettings.highlightAccount)
+                                $("#" + $(b).attr("id")).highlight("@" + accountName);
                         }
                             notificationSettings.phrases.forEach(function(phrase, i) {
                             if (stxt.indexOf(phrase.text.toLowerCase()) != -1) {
                                     found = true;
-                                    $("#" + $(b).attr("id")).highlight(phrase);
+                                    if(notificationSettings.highlightPhrases)
+                                        $("#" + $(b).attr("id")).highlight(phrase.text);
                                 }
                             });
                         
@@ -183,7 +187,7 @@ function loadChatbox() {
     };
 }
 
-notifyMe = function notifyMe(title, msg, timeout) {
+function notifyMe(title, msg, timeout) {
     // Let's check if the browser supports notifications
     if (!("Notification" in window)) {
         alert("This browser does not support desktop notification");
@@ -286,13 +290,22 @@ function loadAngular() {
             localStorageService.bind($scope, 'settings');
             notificationSettings = $scope.settings;
         } else {
+            notifyMe("LoE Chat", "Your browser doesn't support localStorage! That Sucks!", 0);
             $scope.settings = notificationSettings;
         }
         $scope.getChatStyle = function() {
             return {'height': $scope.settings.chatHeight + 'px','max-height': $scope.settings.chatHeight + 'px'};
         };
-        $scope.people = setupPeople();
         
+        if($scope.settings.highlightAccount == undefined)
+            $scope.settings.highlightAccount = true;
+        if($scope.settings.highlightPhrases == undefined)
+            $scope.settings.highlightPhrases = true;
+        
+        $scope.people = setupPeople();
+        $scope.version = branch;
+        $scope.notifyMe = notifyMe;
+        $scope.accountName = accountName;
         console.log($scope);
         loadChatbox();
         notifyMe("LoE Chat", "Loaded Notifications", 10000);

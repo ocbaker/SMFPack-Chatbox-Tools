@@ -2,11 +2,15 @@
     <accordion-group heading="Settings">
         <b>General Notifications: </b><input type="checkbox" ng-model="settings.general"> <b>Timeout: </b><input type="text" ng-disabled="!settings.general" ng-model="settings.generalTimeout"><br/>
         <b>Mention Notifications: </b><input type="checkbox" ng-model="settings.mentions"> <b>Timeout: </b><input type="text" ng-disabled="!settings.mentions" ng-model="settings.mentionTimeout"><br/>
+        <b style="margin-left:15px">Highlight @{{accountName}}: </b><input type="checkbox" ng-model="settings.highlightAccount"><br/>
+        <b style="margin-left:15px">Highlight Phrases: </b><input type="checkbox" ng-model="settings.highlightPhrases"><br/>
         <b>Mention Phrases: </b><tags-input ng-model="settings.phrases"></tags-input><br/>
         <b>Chat Height: </b><input type="text" ng-model="settings.chatHeight"
              ng-model-options="{ updateOn: 'blur' }"><br/>
         <b>Notify when chat active: </b><input type="checkbox" ng-model="settings.notifyWhenChatActive"><br/>
         <br/>
-        <b>Got a Bug or feature request? </b><a href="https://github.com/ocbaker/SMFPack-Chatbox-Tools/issues/new">Report here!</a>
+        <b>Got a Bug or feature request? </b><a href="https://github.com/ocbaker/SMFPack-Chatbox-Tools/issues/new">Report here!</a><br/>
+        <br/>
+        <b>Version: </b>{{version}}
     </accordion-group>
 </accordion>
